@@ -1,7 +1,7 @@
 import type { PrismaClient } from "@prisma/client";
 import { describe, expect, it } from "vitest";
 import {
-  ALSContextPrivider,
+  ALSContextProvider,
   type Conn,
 } from "@/infrastructure/repository/context";
 import { PrismaClient as TestPrismaClient } from "../../../generated/prisma-test";
@@ -10,9 +10,9 @@ function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-describe("ALSContextPrivider (infra)", () => {
+describe("ALSContextProvider (infra)", () => {
   const base = new TestPrismaClient();
-  const provider = new ALSContextPrivider(base as unknown as PrismaClient);
+  const provider = new ALSContextProvider(base as unknown as PrismaClient);
 
   it("returns base context when not in a scope", () => {
     expect(provider.get()).toBe(base);

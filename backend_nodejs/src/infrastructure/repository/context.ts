@@ -4,7 +4,7 @@ import type { ContextProvider } from "@/domain/repository/context";
 
 export type Conn = PrismaClient | Prisma.TransactionClient;
 
-export class ALSContextPrivider implements ContextProvider<Conn> {
+export class ALSContextProvider implements ContextProvider<Conn> {
   private readonly als = new AsyncLocalStorage<Conn>();
 
   constructor(private readonly base: PrismaClient) {}

@@ -1,14 +1,14 @@
 import type { PrismaClient } from "@prisma/client";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Todo } from "@/domain/model/todo";
-import { ALSContextPrivider } from "@/infrastructure/repository/context";
+import { ALSContextProvider } from "@/infrastructure/repository/context";
 import { TodoRepositoryImpl } from "@/infrastructure/repository/todoRepository";
 import { TransactionServiceImpl } from "@/infrastructure/service/transactionService";
 import { PrismaClient as TestPrismaClient } from "../../../generated/prisma-test";
 
 describe("TransactionServiceImpl (infra, sqlite)", () => {
   const prisma = new TestPrismaClient() as unknown as PrismaClient;
-  const provider = new ALSContextPrivider(prisma);
+  const provider = new ALSContextProvider(prisma);
   const tx = new TransactionServiceImpl(prisma, provider);
   const repo = new TodoRepositoryImpl(provider);
 

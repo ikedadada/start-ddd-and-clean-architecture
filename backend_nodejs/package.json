@@ -14,7 +14,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.15.2",
+    "@types/node": "^24.3.3",
     "prisma": "^6.16.1",
     "vite": "^6.3.3",
     "vitest": "^3.2.4"

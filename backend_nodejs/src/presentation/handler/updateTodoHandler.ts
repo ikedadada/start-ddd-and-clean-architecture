@@ -14,7 +14,6 @@ const updateTodoRequestSchema = z.object({
   body: z.object({
     title: z.string().min(2).max(100),
     description: z.string().max(500).optional(),
-    completed: z.boolean().optional(),
   }),
 });
 

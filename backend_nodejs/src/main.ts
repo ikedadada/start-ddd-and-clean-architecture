@@ -12,7 +12,7 @@ import { TransactionServiceImpl } from "@/infrastructure/service/transactionServ
 import { GetAllTodosHandler } from "@/presentation/handler/getAllTodoHandler";
 import { GetTodoHandler } from "@/presentation/handler/getTodoHandler";
 import { errorHandler } from "@/presentation/middleware/errorHandler";
-import { ALSContextPrivider } from "./infrastructure/repository/context";
+import { ALSContextProvider } from "./infrastructure/repository/context";
 import { CreateTodoHandler } from "./presentation/handler/createTodoHandler";
 import { DeleteTodoHandler } from "./presentation/handler/deleteTodoHandler";
 import { MarkAsCompletedTodoHandler } from "./presentation/handler/markAsCompletedTodoHandler";
@@ -21,7 +21,7 @@ import { UpdateTodoHandler } from "./presentation/handler/updateTodoHandler";
 import { routeNotFoundHandler } from "./presentation/middleware/routeNotFoundHandler";
 
 const prismaClient = new PrismaClient();
-const contextProvider = new ALSContextPrivider(prismaClient);
+const contextProvider = new ALSContextProvider(prismaClient);
 
 const todoRepository = new TodoRepositoryImpl(contextProvider);
 const transactionService = new TransactionServiceImpl(
@@ -79,4 +79,6 @@ app.put("/todos/:id/uncomplete", markAsNotCompletedTodoHandler.handle);
 app.use(errorHandler);
 app.use(routeNotFoundHandler);
 
-app.listen(3000, () => console.log("Server is listening on port 3000..."));
+app.listen(process.env.PORT ?? 3000, () =>
+  console.log(`Server is listening on port ${process.env.PORT ?? 3000}...`),
+);

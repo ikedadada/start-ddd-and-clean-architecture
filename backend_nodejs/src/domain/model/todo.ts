@@ -17,7 +17,7 @@ export class Todo {
   constructor(title: string, description?: string) {
     this._id = newId();
     this._title = title;
-    this._description = description || null;
+    this._description = description ?? null;
   }
 
   get id(): string {

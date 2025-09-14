@@ -9,8 +9,6 @@ type TodoDatamodel = {
   title: string;
   description: string | null;
   completed: boolean;
-  created_at: Date;
-  updated_at: Date;
 };
 
 function toTodoDatamodel(todo: Todo): TodoDatamodel {
@@ -20,8 +18,6 @@ function toTodoDatamodel(todo: Todo): TodoDatamodel {
     title,
     description: description ?? null,
     completed: isCompleted,
-    created_at: new Date(),
-    updated_at: new Date(),
   };
 }
 

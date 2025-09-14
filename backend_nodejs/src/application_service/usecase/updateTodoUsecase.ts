@@ -26,7 +26,7 @@ export class UpdateTodoUsecaseImpl implements UpdateTodoUsecase {
     const todo = await this.transactionService.run(async () => {
       const todo = await this.todoRepository.findById(request.id);
       todo.updateTitle(request.title);
-      todo.updateDescription(request.description || null);
+      todo.updateDescription(request.description ?? null);
       await this.todoRepository.save(todo);
       return todo;
     });
