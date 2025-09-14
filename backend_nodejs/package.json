@@ -3,14 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "node --experimental-transform-types --watch-path=./src src/main.ts",
+    "dev": "node --import=tsx --watch-path=./src src/main.ts",
     "start": "NODE_ENV=production tsx src/main.ts",
+    "test": "vitest run",
+    "check": "biome check --write src",
     "build": "vite build --ssr src/main.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.4",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.2",
-    "vite": "^6.3.3"
+    "vite": "^6.3.3",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "express": "^5.1.0",

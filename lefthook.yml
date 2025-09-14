@@ -1,0 +1,9 @@
+pre-commit:
+  commands:
+    nodejs:
+      run: |
+        cd backend_nodejs
+        npm install
+        npm run check
+        npm test
+      files: \.(ts|tsx|js|jsx)$
