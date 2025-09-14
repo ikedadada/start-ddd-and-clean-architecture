@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS todos (
-    id BINARY(16) PRIMARY KEY,
+    id CHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     completed BOOLEAN NOT NULL DEFAULT FALSE,

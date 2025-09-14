@@ -5,21 +5,26 @@
   "scripts": {
     "dev": "node --import=tsx --watch-path=./src src/main.ts",
     "start": "NODE_ENV=production tsx src/main.ts",
-    "test": "vitest run",
+    "pretest": "mkdir -p tmp && rm -f tmp/test.db && prisma generate --schema=prisma/schema.test.prisma && DATABASE_URL='file:./tmp/test.db' prisma db push --schema=prisma/schema.test.prisma",
+    "test": "DATABASE_URL='file:./tmp/test.db' vitest run",
     "check": "biome check --write src",
-    "build": "vite build --ssr src/main.ts"
+    "build": "vite build --ssr src/main.ts",
+    "postinstall": "prisma generate"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.2",
+    "prisma": "^6.16.1",
     "vite": "^6.3.3",
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@prisma/client": "^6.16.1",
     "express": "^5.1.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.1.8"
   }
 }

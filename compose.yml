@@ -8,10 +8,7 @@ services:
     volumes:
       - ./backend_nodejs:/app
     environment:
-      - DB_HOST=db
-      - DB_USER=user
-      - DB_PASSWORD=password
-      - DB_NAME=todo_api
+      - DATABASE_URL=mysql://user:password@db:3306/todo_api
     depends_on:
       - db
   db:
