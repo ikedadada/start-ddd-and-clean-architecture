@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node --import=tsx --watch-path=./src src/main.ts",
     "start": "NODE_ENV=production tsx src/main.ts",
-    "pretest": "mkdir -p tmp && rm -f tmp/test.db && prisma generate --schema=prisma/schema.test.prisma && DATABASE_URL='file:./tmp/test.db' prisma db push --schema=prisma/schema.test.prisma",
+    "pretest": "mkdir -p tmp && rm -f tmp/test.db && prisma generate --schema=prisma/test.prisma && DATABASE_URL='file:./tmp/test.db' prisma db push --schema=prisma/test.prisma",
     "test": "DATABASE_URL='file:./tmp/test.db' vitest run",
     "check": "biome check --write src",
     "build": "vite build --ssr src/main.ts",
