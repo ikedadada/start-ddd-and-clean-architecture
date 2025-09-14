@@ -8,6 +8,7 @@ const __dirname = dirname(__filename);
 export default defineConfig({
   test: {
     environment: "node",
+    setupFiles: [resolve(__dirname, "./vitest.setup.ts")],
   },
   resolve: {
     alias: {
@@ -15,4 +16,3 @@ export default defineConfig({
     },
   },
 });
-
