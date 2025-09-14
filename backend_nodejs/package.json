@@ -1,0 +1,21 @@
+{
+  "name": "backend_nodejs",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "node --experimental-transform-types --watch-path=./src src/main.ts",
+    "start": "NODE_ENV=production tsx src/main.ts",
+    "build": "vite build --ssr src/main.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.2",
+    "vite": "^6.3.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "uuid": "^13.0.0"
+  }
+}

@@ -1,4 +1,19 @@
 services:
+  nodejs:
+    build:
+      context: ./backend_nodejs
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend_nodejs:/app
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=todo_api
+    depends_on:
+      - db
   db:
     image: mysql:8.0
     environment:
