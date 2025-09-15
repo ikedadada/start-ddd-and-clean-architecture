@@ -1,0 +1,571 @@
+{
+  "info": {
+    "_postman_id": "197f0160-d414-40c6-b9ab-641c109a6725",
+    "name": "StartDDDAndCleanArchitecture",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34444804"
+  },
+  "item": [
+    {
+      "name": "[201]create_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"0_{{$randomWords}}\",\r\n    \"description\": \"0_{{$randomPhrase}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[400]create_todo",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [""],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[200]get_todos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[200]update_todo",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [""],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"updated_1_{{$randomWords}}\",\r\n    \"description\": \"updated_1_{{$randomPhrase}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[400]update_todo",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [""],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[404]update_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"updated_1_{{$randomWords}}\",\r\n    \"description\": \"updated_1_{{$randomPhrase}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-000000000000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-000000000000"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[200]get_todo",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [""],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[404]get_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-000000000000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-000000000000"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[200]complete_todo",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [""],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502/complete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502", "complete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[409]complete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {\r",
+              "    pm.response.to.have.status(409);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502/complete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502", "complete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[404]complete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-000000000000/complete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-000000000000", "complete"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[200]uncomplete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502/uncomplete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": [
+            "todos",
+            "01994768-948a-759a-a485-3ccbb2f3a502",
+            "uncomplete"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[409]uncomplete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {\r",
+              "    pm.response.to.have.status(409);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502/uncomplete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": [
+            "todos",
+            "01994768-948a-759a-a485-3ccbb2f3a502",
+            "uncomplete"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[404]uncomplete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-000000000000/uncomplete",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": [
+            "todos",
+            "01994768-948a-759a-a485-000000000000",
+            "uncomplete"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[204]delete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-3ccbb2f3a502",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-3ccbb2f3a502"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "[404]delete_todo",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:{{PORT}}/todos/01994768-948a-759a-a485-000000000000",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "{{PORT}}",
+          "path": ["todos", "01994768-948a-759a-a485-000000000000"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
