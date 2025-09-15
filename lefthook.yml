@@ -7,4 +7,12 @@ pre-commit:
         npm install
         npm run check
         npm test
+    golang:
+      glob: "backend_golang/**/*.go"
+      run: |
+        cd backend_golang
+        go mod tidy
+        go fmt ./...
+        go vet ./...
+        go test ./...
       
