@@ -57,58 +57,66 @@ func TestNewTodo(t *testing.T) {
 }
 
 func TestTodo_CompletionToggles(t *testing.T) {
-    desc := "x"
-    tests := []struct {
-        name      string
-        setup     func(*Todo)
-        action    func(*Todo) error
-        wantErr   error
-        wantState bool
-    }{
-        {
-            name:      "MarkAsCompleted from false",
-            setup:     func(*Todo) {},
-            action:    func(td *Todo) error { return td.MarkAsCompleted() },
-            wantErr:   nil,
-            wantState: true,
-        },
-        {
-            name:  "MarkAsNotCompleted from true",
-            setup: func(td *Todo) { if err := td.MarkAsCompleted(); err != nil { t.Fatalf("setup failed: %v", err) } },
-            action: func(td *Todo) error { return td.MarkAsNotCompleted() },
-            wantErr:   nil,
-            wantState: false,
-        },
-        {
-            name:      "MarkAsNotCompleted from false returns error",
-            setup:     func(*Todo) {},
-            action:    func(td *Todo) error { return td.MarkAsNotCompleted() },
-            wantErr:   ErrTodoNotCompleted,
-            wantState: false,
-        },
-        {
-            name:  "MarkAsCompleted twice returns error",
-            setup: func(td *Todo) { if err := td.MarkAsCompleted(); err != nil { t.Fatalf("setup failed: %v", err) } },
-            action: func(td *Todo) error { return td.MarkAsCompleted() },
-            wantErr:   ErrTodoAlreadyCompleted,
-            wantState: true,
-        },
-    }
+	desc := "x"
+	tests := []struct {
+		name      string
+		setup     func(*Todo)
+		action    func(*Todo) error
+		wantErr   error
+		wantState bool
+	}{
+		{
+			name:      "MarkAsCompleted from false",
+			setup:     func(*Todo) {},
+			action:    func(td *Todo) error { return td.MarkAsCompleted() },
+			wantErr:   nil,
+			wantState: true,
+		},
+		{
+			name: "MarkAsNotCompleted from true",
+			setup: func(td *Todo) {
+				if err := td.MarkAsCompleted(); err != nil {
+					t.Fatalf("setup failed: %v", err)
+				}
+			},
+			action:    func(td *Todo) error { return td.MarkAsNotCompleted() },
+			wantErr:   nil,
+			wantState: false,
+		},
+		{
+			name:      "MarkAsNotCompleted from false returns error",
+			setup:     func(*Todo) {},
+			action:    func(td *Todo) error { return td.MarkAsNotCompleted() },
+			wantErr:   ErrTodoNotCompleted,
+			wantState: false,
+		},
+		{
+			name: "MarkAsCompleted twice returns error",
+			setup: func(td *Todo) {
+				if err := td.MarkAsCompleted(); err != nil {
+					t.Fatalf("setup failed: %v", err)
+				}
+			},
+			action:    func(td *Todo) error { return td.MarkAsCompleted() },
+			wantErr:   ErrTodoAlreadyCompleted,
+			wantState: true,
+		},
+	}
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            td := NewTodo("t", &desc)
-            tt.setup(&td)
-            err := tt.action(&td)
-            if err != tt.wantErr {
-                t.Fatalf("error mismatch: got %v want %v", err, tt.wantErr)
-            }
-            got := td.Serialize().Completed
-            if got != tt.wantState {
-                t.Fatalf("Completed mismatch: got %v want %v", got, tt.wantState)
-            }
-        })
-    }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			td := NewTodo("t", &desc)
+			tt.setup(&td)
+			err := tt.action(&td)
+			if err != tt.wantErr {
+				t.Fatalf("error mismatch: got %v want %v", err, tt.wantErr)
+			}
+			got := td.Serialize().Completed
+			if got != tt.wantState {
+				t.Fatalf("Completed mismatch: got %v want %v", got, tt.wantState)
+			}
+		})
+	}
 }
 
 func TestCommandUpdateTodo_Update(t *testing.T) {
@@ -145,10 +153,10 @@ func TestCommandUpdateTodo_Update(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            todo := NewTodo("init", tt.initialDesc)
-            tt.cmd.Update(&todo)
-            got := todo.Serialize()
+		t.Run(tt.name, func(t *testing.T) {
+			todo := NewTodo("init", tt.initialDesc)
+			tt.cmd.Update(&todo)
+			got := todo.Serialize()
 
 			if got.Title != tt.wantTitle {
 				t.Fatalf("Title mismatch: got %q want %q", got.Title, tt.wantTitle)
@@ -193,13 +201,13 @@ func TestDeserializeTodo_Roundtrip(t *testing.T) {
 		},
 	}
 
-    for _, tt := range tests {
-        t.Run(tt.name, func(t *testing.T) {
-            td := DeserializeTodo(tt.in)
-            got := td.Serialize()
-            if !reflect.DeepEqual(got, tt.in) {
-                t.Fatalf("roundtrip mismatch:\n got: %#v\nwant: %#v", got, tt.in)
-            }
-        })
-    }
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			td := DeserializeTodo(tt.in)
+			got := td.Serialize()
+			if !reflect.DeepEqual(got, tt.in) {
+				t.Fatalf("roundtrip mismatch:\n got: %#v\nwant: %#v", got, tt.in)
+			}
+		})
+	}
 }
