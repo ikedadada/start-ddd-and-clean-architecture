@@ -1,11 +1,11 @@
 package infrastructure
 
 import (
-    "context"
-    "os"
+	"context"
+	"os"
 
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type DB struct {
@@ -13,12 +13,12 @@ type DB struct {
 }
 
 func NewDB() *DB {
-    dsn := os.Getenv("DATABASE_URL")
-    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-    if err != nil {
-        panic("failed to connect database")
-    }
-    return &DB{db}
+	dsn := os.Getenv("DATABASE_URL")
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	return &DB{db}
 }
 
 type TxKey string

@@ -9,7 +9,7 @@ import (
 )
 
 type GetTodoUsecase interface {
-    Handle(ctx context.Context, id uuid.UUID) (model.Todo, error)
+	Handle(ctx context.Context, id uuid.UUID) (model.Todo, error)
 }
 
 type getTodoUsecaseImpl struct {
