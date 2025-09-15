@@ -2,6 +2,7 @@ pre-commit:
   commands:
     nodejs:
       glob: "backend_nodejs/**/*.{ts,tsx,js,jsx}"
+      stage_fixed: true
       run: |
         cd backend_nodejs
         npm install
@@ -9,6 +10,7 @@ pre-commit:
         npm test
     golang:
       glob: "backend_golang/**/*.go"
+      stage_fixed: true
       run: |
         cd backend_golang
         go mod tidy
