@@ -1,6 +1,6 @@
 module backend_golang
 
-go 1.25.1
+go 1.25
 
 require (
 	github.com/go-playground/validator/v10 v10.27.0

@@ -25,6 +25,10 @@ type TxKey string
 
 const txKey TxKey = "auth_tx"
 
+func WithTx(ctx context.Context, tx *gorm.DB) context.Context {
+	return context.WithValue(ctx, txKey, tx)
+}
+
 func (d *DB) Conn(ctx context.Context) *gorm.DB {
 	tx, ok := ctx.Value(txKey).(*gorm.DB)
 	if ok && tx != nil {
@@ -34,4 +38,12 @@ func (d *DB) Conn(ctx context.Context) *gorm.DB {
 }
 
 func (d *DB) Close() {
+	if d == nil || d.DB == nil {
+		return
+	}
+	sqlDB, err := d.DB.DB()
+	if err != nil {
+		return
+	}
+	sqlDB.Close()
 }

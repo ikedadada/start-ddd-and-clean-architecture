@@ -24,7 +24,6 @@ type UpdateTodoRequest struct {
 	ID          uuid.UUID `param:"id" validate:"required"`
 	Title       string    `json:"title" validate:"required"`
 	Description *string   `json:"description"`
-	Completed   bool      `json:"completed"`
 }
 
 type UpdateTodoResponse struct {

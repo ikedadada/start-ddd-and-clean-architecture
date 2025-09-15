@@ -24,6 +24,7 @@ func (s *TransactionService) Run(ctx context.Context, fn func(ctx context.Contex
 			err = fmt.Errorf("recovered panic, err: %v", r)
 		}
 	}(tx)
+	ctx = infrastructure.WithTx(ctx, tx)
 	if err = fn(ctx); err != nil {
 		tx.Rollback()
 		return
