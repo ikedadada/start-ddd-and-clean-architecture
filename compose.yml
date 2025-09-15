@@ -1,4 +1,17 @@
 services:
+  golang:
+    build:
+      context: ./backend_golang
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./backend_golang:/app
+    environment:
+      - DATABASE_URL=user:password@tcp(db:3306)/todo_api
+    depends_on:
+      db:
+        condition: service_healthy
   nodejs:
     build:
       context: ./backend_nodejs
@@ -10,7 +23,8 @@ services:
     environment:
       - DATABASE_URL=mysql://user:password@db:3306/todo_api
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     image: mysql:8.0
     environment:
@@ -23,6 +37,12 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uuser -ppassword || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
 volumes:
   db_data:
