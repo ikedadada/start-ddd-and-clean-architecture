@@ -2,9 +2,15 @@ FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 WORKDIR /app
 
+ENV UV_PROJECT_ENVIRONMENT=/opt/uv-venv
+ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
+ENV PYTHONPATH=/app
+
 EXPOSE 3000
 
-COPY . .
-RUN uv sync --frozen --no-cache
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache --group dev
 
-CMD ["/app/.venv/bin/fastapi", "run", "main.py", "--host=0.0.0.0", "--port=3000"]
+COPY . .
+
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000", "--reload"]
