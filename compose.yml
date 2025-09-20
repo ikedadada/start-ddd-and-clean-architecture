@@ -1,4 +1,17 @@
 services:
+  python:
+    build:
+      context: ./backend_python
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./backend_python:/app
+    environment:
+      - DATABASE_URL=mysql://user:password@db:3306/todo_api
+    depends_on:
+      db:
+        condition: service_healthy
   golang:
     build:
       context: ./backend_golang

@@ -17,4 +17,11 @@ pre-commit:
         go fmt ./...
         go vet ./...
         go test ./...
-      
+    python:
+      glob: "backend_python/**/*.py"
+      stage_fixed: true
+      run: |
+        cd backend_python
+        echo "python version"
+        ruff check .
+        ruff format .
