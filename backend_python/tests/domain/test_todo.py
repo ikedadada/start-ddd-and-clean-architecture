@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from uuid_utils import UUID, uuid7
 
-from todo_api.domain.model import Todo, TodoDTO
 from todo_api.domain.model.errors import TodoAlreadyCompletedError, TodoNotCompletedError
+from todo_api.domain.model.todo import Todo, TodoDTO
 
 
 def test_new_todo_has_uuid_and_defaults():
@@ -28,38 +28,38 @@ def test_update_changes_title_and_description():
 def test_mark_completed_sets_flag():
     todo = Todo(title="deploy")
 
-    todo.mark_completed()
+    todo.mark_as_completed()
 
     assert todo.completed
 
 
 def test_mark_completed_twice_raises():
     todo = Todo(title="deploy")
-    todo.mark_completed()
+    todo.mark_as_completed()
 
     with pytest.raises(TodoAlreadyCompletedError):
-        todo.mark_completed()
+        todo.mark_as_completed()
 
 
 def test_mark_uncompleted_without_being_completed_raises():
     todo = Todo(title="verify")
 
     with pytest.raises(TodoNotCompletedError):
-        todo.mark_uncompleted()
+        todo.mark_as_uncompleted()
 
 
 def test_mark_uncompleted_transitions_back_to_false():
     todo = Todo(title="verify")
-    todo.mark_completed()
+    todo.mark_as_completed()
 
-    todo.mark_uncompleted()
+    todo.mark_as_uncompleted()
 
     assert not todo.completed
 
 
 def test_to_dto_serializes_current_state():
     todo = Todo(title="document", description="update README")
-    todo.mark_completed()
+    todo.mark_as_completed()
 
     dto = todo.to_dto()
 

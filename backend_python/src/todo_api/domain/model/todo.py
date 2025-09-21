@@ -38,12 +38,12 @@ class Todo:
         self._title = title
         self._description = description
 
-    def mark_completed(self):
+    def mark_as_completed(self):
         if self._completed:
             raise TodoAlreadyCompletedError()
         self._completed = True
 
-    def mark_uncompleted(self):
+    def mark_as_uncompleted(self):
         if not self._completed:
             raise TodoNotCompletedError()
         self._completed = False
