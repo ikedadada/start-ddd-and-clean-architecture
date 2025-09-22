@@ -1,15 +1,16 @@
 from abc import ABC, abstractmethod
-from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
 from todo_api.application_service.service.transaction_service import TransactionService
 from todo_api.domain.model.todo import Todo
 from todo_api.domain.repository.todo_repository import TodoRepository
+from todo_api.utils.uuid import UUID7
 
 
 class UpdateTodoUsecaseInput(BaseModel):
-    id: UUID
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    id: UUID7
     title: str
     description: str | None
 

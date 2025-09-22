@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from uuid_utils import UUID, uuid7
+
+from todo_api.utils.uuid import UUID7, parse_uuid7, uuid7
 
 from .errors import TodoAlreadyCompletedError, TodoNotCompletedError
 
@@ -13,13 +14,13 @@ class TodoDTO(BaseModel):
 
 class Todo:
     def __init__(self, title: str, description: str | None = None):
-        self._id: UUID = uuid7()
+        self._id: UUID7 = uuid7()
         self._title = title
         self._description = description
         self._completed = False
 
     @property
-    def id(self) -> UUID:
+    def id(self) -> UUID7:
         return self._id
 
     @property
@@ -59,7 +60,7 @@ class Todo:
     @classmethod
     def from_dto(cls, dto: TodoDTO) -> "Todo":
         todo = cls.__new__(cls)  # Bypass __init__ to avoid UUID regeneration
-        todo._id = UUID(dto.id)
+        todo._id = parse_uuid7(dto.id)
         todo._title = dto.title
         todo._description = dto.description
         todo._completed = dto.completed

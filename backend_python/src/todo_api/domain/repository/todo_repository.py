@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from uuid import UUID
 
 from todo_api.domain.model.todo import Todo
+from todo_api.utils.uuid import UUID7
 
 
 class TodoRepository(ABC):
@@ -10,7 +10,7 @@ class TodoRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, todo_id: UUID) -> Todo:
+    def find_by_id(self, todo_id: UUID7) -> Todo:
         pass
 
     @abstractmethod
