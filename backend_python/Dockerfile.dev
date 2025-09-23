@@ -8,7 +8,9 @@ ENV PYTHONPATH=/app
 
 EXPOSE 3000
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
+COPY src ./src
+
 RUN uv sync --frozen --no-cache --group dev
 
 COPY . .
