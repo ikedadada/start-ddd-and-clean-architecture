@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from typing import Any, TypeVar
-from uuid import UUID, uuid4
+
+from uuid_utils import UUID, uuid7
 
 from todo_api.application_service.service.transaction_service import TransactionService
 from todo_api.application_service.usecase.mark_as_completed_todo_usecase import (
@@ -49,7 +50,7 @@ def test_execute_marks_completed_within_transaction():
     todo_repository = RecordingTodoRepository(existing)
     transaction_service = RecordingTransactionService()
     usecase = MarkAsCompletedTodoUsecaseImpl(todo_repository, transaction_service)
-    todo_id = uuid4()
+    todo_id = uuid7()
 
     output = usecase.execute(MarkAsCompletedTodoUsecaseInput(id=todo_id))
 

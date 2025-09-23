@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from typing import Any, TypeVar
-from uuid import UUID, uuid4
+
+from uuid_utils import UUID, uuid7
 
 from todo_api.application_service.service.transaction_service import TransactionService
 from todo_api.application_service.usecase.update_todo_usecase import (
@@ -49,7 +50,7 @@ def test_execute_updates_and_saves_within_transaction():
     todo_repository = RecordingTodoRepository(existing)
     transaction_service = RecordingTransactionService()
     usecase = UpdateTodoUsecaseImpl(todo_repository, transaction_service)
-    todo_id = uuid4()
+    todo_id = uuid7()
 
     output = usecase.execute(UpdateTodoUsecaseInput(id=todo_id, title="final", description="after"))
 

@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid_utils import UUID, uuid7
 
 from todo_api.application_service.usecase.get_todo_usecase import (
     GetTodoUsecaseImpl,
@@ -31,7 +31,7 @@ def test_execute_fetches_todo_by_id():
     todo = Todo(title="inspect")
     todo_repository = RecordingTodoRepository(todo)
     usecase = GetTodoUsecaseImpl(todo_repository)
-    todo_id = uuid4()
+    todo_id = uuid7()
 
     output = usecase.execute(GetTodoUsecaseInput(id=todo_id))
 
