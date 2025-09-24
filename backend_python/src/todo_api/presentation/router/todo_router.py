@@ -59,11 +59,11 @@ def router(container: TodoRouterContainer) -> APIRouter:
     def get_todo(id: UUID7 = Path(...)) -> GetTodoResponse:  # pyright: ignore[reportUnusedFunction]
         return container.get_todo.handle(id)
 
-    @api.put("/{id}/completed", response_model=MarkAsCompletedTodoResponse)
+    @api.put("/{id}/complete", response_model=MarkAsCompletedTodoResponse)
     def mark_as_completed_todo(id: UUID7 = Path(...)) -> MarkAsCompletedTodoResponse:  # pyright: ignore[reportUnusedFunction]
         return container.mark_as_completed_todo.handle(id)
 
-    @api.put("/{id}/uncompleted", response_model=MarkAsUnCompletedTodoResponse)
+    @api.put("/{id}/uncomplete", response_model=MarkAsUnCompletedTodoResponse)
     def mark_as_uncompleted_todo(id: UUID7 = Path(...)) -> MarkAsUnCompletedTodoResponse:  # pyright: ignore[reportUnusedFunction]
         return container.mark_as_uncompleted_todo.handle(id)
 
