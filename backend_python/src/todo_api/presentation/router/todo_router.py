@@ -7,7 +7,7 @@ from todo_api.presentation.handler.create_todo_handler import (
     CreateTodoRequest,
     CreateTodoResponse,
 )
-from todo_api.presentation.handler.delete_todo_handler import DeleteTodoHandler, DeleteTodoResponse
+from todo_api.presentation.handler.delete_todo_handler import DeleteTodoHandler
 from todo_api.presentation.handler.get_all_todos_handler import (
     GetAllTodosHandler,
     GetAllTodosResponse,
@@ -48,8 +48,9 @@ def router(container: TodoRouterContainer) -> APIRouter:
         return container.create_todo.handle(request)
 
     @api.delete("/{id}", response_model=None, status_code=204)
-    def delete_todo(id: UUID7 = Path(...)) -> DeleteTodoResponse:  # pyright: ignore[reportUnusedFunction]
-        return container.delete_todo.handle(id)
+    def delete_todo(id: UUID7 = Path(...)) -> None:  # pyright: ignore[reportUnusedFunction]
+        container.delete_todo.handle(id)
+        return None
 
     @api.get("", response_model=GetAllTodosResponse)
     def get_all_todos() -> GetAllTodosResponse:  # pyright: ignore[reportUnusedFunction]

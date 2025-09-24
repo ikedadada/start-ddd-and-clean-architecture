@@ -10,6 +10,7 @@ from sqlalchemy import Engine, insert
 from sqlalchemy.orm import Session, sessionmaker
 
 from todo_api.domain.repository.context_provider import ContextProvider
+from todo_api.infrastructure.repository.context_provider import ContextProviderImpl
 from todo_api.infrastructure.repository.data_model.todo import TodoDataModel
 from todo_api.infrastructure.service.transaction_service import TransactionServiceImpl
 
@@ -33,6 +34,7 @@ class StubContextProvider(ContextProvider[Session]):
         finally:
             self._session.reset(token)
             session.close()
+
     def current(self) -> Session:
         session = self._session.get()
         if session is None:
@@ -46,6 +48,8 @@ class StubContextProvider(ContextProvider[Session]):
             yield
         finally:
             self._session.reset(token)
+
+
 @pytest.fixture()
 def stub_context_provider(mysql_engine: Engine) -> StubContextProvider:
     return StubContextProvider(mysql_engine)
@@ -102,6 +106,64 @@ def test_transaction_service_rolls_back_on_error(
         transaction_service.Run(failing)
 
     with stub_context_provider.session() as session:
+        result = session.get(TodoDataModel, todo_data["id"])
+
+    assert result is None
+
+
+@pytest.fixture()
+def context_provider_impl(mysql_engine: Engine) -> ContextProviderImpl:
+    return ContextProviderImpl(engine=mysql_engine)
+
+
+def test_transaction_service_commits_with_context_provider_impl(
+    mysql_engine: Engine,
+    context_provider_impl: ContextProviderImpl,
+) -> None:
+    service = TransactionServiceImpl(context_provider_impl)
+    todo_data: dict[str, str | bool] = {
+        "id": str(uuid4()),
+        "title": "commit",
+        "description": "persist via context provider impl",
+        "completed": False,
+    }
+
+    def persist() -> None:
+        session = context_provider_impl.current()
+        session.execute(insert(TodoDataModel).values(**todo_data))
+
+    service.Run(persist)
+
+    with Session(mysql_engine) as session:
+        stored = session.get(TodoDataModel, todo_data["id"])
+
+    assert stored is not None
+    assert stored.title == todo_data["title"]
+    assert stored.description == todo_data["description"]
+    assert stored.completed is todo_data["completed"]
+
+
+def test_transaction_service_rolls_back_with_context_provider_impl(
+    mysql_engine: Engine,
+    context_provider_impl: ContextProviderImpl,
+) -> None:
+    service = TransactionServiceImpl(context_provider_impl)
+    todo_data: dict[str, str | bool] = {
+        "id": str(uuid4()),
+        "title": "rollback",
+        "description": "should not persist with context provider impl",
+        "completed": False,
+    }
+
+    def failing() -> None:
+        session = context_provider_impl.current()
+        session.execute(insert(TodoDataModel).values(**todo_data))
+        raise RuntimeError("boom")
+
+    with pytest.raises(RuntimeError):
+        service.Run(failing)
+
+    with Session(mysql_engine) as session:
         result = session.get(TodoDataModel, todo_data["id"])
 
     assert result is None
