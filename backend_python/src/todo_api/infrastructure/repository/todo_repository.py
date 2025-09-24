@@ -1,11 +1,17 @@
+from sqlalchemy import delete, select
+from sqlalchemy.orm import Session
+
 from todo_api.domain.model.todo import Todo
+from todo_api.domain.repository.context_provider import ContextProvider
 from todo_api.domain.repository.errors import RepositoryNotFoundError
 from todo_api.domain.repository.todo_repository import TodoRepository
+from todo_api.infrastructure.repository.data_model.todo import TodoDataModel
 from todo_api.utils.uuid import UUID7
 
 
 class TodoRepositoryImpl(TodoRepository):
-    def __init__(self) -> None:
+    def __init__(self, context_provider: ContextProvider[Session]) -> None:
+        self.context_provider = context_provider
         sample_todo_1 = Todo(title="Sample Todo", description="This is a sample todo item.")
         sample_todo_2 = Todo(title="Another Sample Todo")
         sample_todo_2.mark_as_completed()
@@ -15,19 +21,29 @@ class TodoRepositoryImpl(TodoRepository):
         ]
 
     def find_all(self) -> list[Todo]:
-        return list(self.todos)
+        stmt = select(TodoDataModel)
+        with self.context_provider.session() as session:
+            todos = session.scalars(stmt).all()
+
+        return [todo.to_domain() for todo in todos]
 
     def find_by_id(self, todo_id: UUID7):
-        todo = next((todo for todo in self.todos if todo.id == todo_id), None)
-        if not todo:
+        stmt = select(TodoDataModel).where(TodoDataModel.id == str(todo_id))
+
+        with self.context_provider.session() as session:
+            todo_data_model = session.scalars(stmt).one_or_none()
+
+        if todo_data_model is None:
             raise RepositoryNotFoundError(f"Todo with id {todo_id} not found")
-        return todo
+        return todo_data_model.to_domain()
 
     def save(self, todo: Todo) -> None:
-        existing_todo = next((t for t in self.todos if t.id == todo.id), None)
-        if existing_todo:
-            self.todos.remove(existing_todo)
-        self.todos.append(todo)
+        session = self.context_provider.current()
+        todo_data_model = TodoDataModel.from_domain(todo)
+
+        session.merge(todo_data_model)
+        session.flush()
 
     def delete(self, todo: Todo) -> None:
-        self.todos = [t for t in self.todos if t.id != todo.id]
+        session = self.context_provider.current()
+        session.execute(delete(TodoDataModel).where(TodoDataModel.id == str(todo.id)))

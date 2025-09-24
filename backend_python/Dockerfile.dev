@@ -2,13 +2,17 @@ FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache musl-dev gcc mariadb-dev
+
 ENV UV_PROJECT_ENVIRONMENT=/opt/uv-venv
 ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 ENV PYTHONPATH=/app
 
 EXPOSE 3000
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
+COPY src ./src
+
 RUN uv sync --frozen --no-cache --group dev
 
 COPY . .

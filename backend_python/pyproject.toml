@@ -6,6 +6,8 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.116.2",
+    "mysqlclient>=2.2.7",
+    "sqlalchemy>=2.0.43",
     "starlette>=0.48.0",
     "uuid-utils>=0.11.0",
 ]
@@ -14,11 +16,16 @@ dependencies = [
 dev = [
     "ruff>=0.13.1",
     "pytest>=8.3",
+    "testcontainers[mysql]>=4.13.0",
 ]
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.pyright]
+pythonVersion = "3.13"
+stubPath = ["stubs"]
 
 [tool.setuptools.package-dir]
 "" = "src"

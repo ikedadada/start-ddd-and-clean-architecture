@@ -1,7 +1,6 @@
 from collections.abc import Awaitable, Callable
 
 from fastapi import Request, Response
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -34,8 +33,6 @@ class ErrorHandler(BaseHTTPMiddleware):
                 status_code=e.status_code,
                 content={"code": str(e.status_code), "message": e.message},
             )
-        except RequestValidationError as e:
-            return JSONResponse(status_code=400, content={"code": "400", "message": str(e)})
         except Exception as e:
             # Here you can log the error or handle it as needed
             return JSONResponse(status_code=500, content={"code": "500", "message": str(e)})

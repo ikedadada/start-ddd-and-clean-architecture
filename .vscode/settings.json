@@ -20,10 +20,12 @@
     },
     "python.analysis.typeCheckingMode": "strict",
     "python.analysis.extraPaths": [
-        "backend_python/src"
+        "backend_python/src",
+        "backend_python/stubs"
     ],
     "python.autoComplete.extraPaths": [
-        "backend_python/src"
+        "backend_python/src",
+        "backend_python/stubs"
     ],
     "python.languageServer": "Pylance",
     "python.analysis.autoImportCompletions": true,
