@@ -19,24 +19,20 @@ class StubContextProvider(ContextProvider[Session]):
         self._session_factory = sessionmaker(bind=engine, expire_on_commit=False)
         self._session: ContextVar[Session | None] = ContextVar("stub_session", default=None)
 
-    def session(self):
-        @contextmanager
-        def _session() -> Iterator[Session]:
-            existing = self._session.get()
-            if existing is not None:
-                yield existing
-                return
+    @contextmanager
+    def session(self) -> Iterator[Session]:
+        existing = self._session.get()
+        if existing is not None:
+            yield existing
+            return
 
-            session = self._session_factory()
-            token = self._session.set(session)
-            try:
-                yield session
-            finally:
-                self._session.reset(token)
-                session.close()
-
-        return _session()
-
+        session = self._session_factory()
+        token = self._session.set(session)
+        try:
+            yield session
+        finally:
+            self._session.reset(token)
+            session.close()
     def current(self) -> Session:
         session = self._session.get()
         if session is None:
