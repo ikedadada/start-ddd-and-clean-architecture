@@ -39,18 +39,13 @@ class StubContextProvider(ContextProvider[Session]):
             raise RuntimeError("No active session bound to context provider")
         return session
 
-    def use(self, context: Session):
-        @contextmanager
-        def _use() -> Iterator[None]:
-            token = self._session.set(context)
-            try:
-                yield
-            finally:
-                self._session.reset(token)
-
-        return _use()
-
-
+    @contextmanager
+    def use(self, context: Session) -> Iterator[None]:
+        token = self._session.set(context)
+        try:
+            yield
+        finally:
+            self._session.reset(token)
 @pytest.fixture()
 def stub_context_provider(mysql_engine: Engine) -> StubContextProvider:
     return StubContextProvider(mysql_engine)
