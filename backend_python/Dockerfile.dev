@@ -2,6 +2,8 @@ FROM ghcr.io/astral-sh/uv:python3.13-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache musl-dev gcc mariadb-dev
+
 ENV UV_PROJECT_ENVIRONMENT=/opt/uv-venv
 ENV PATH="${UV_PROJECT_ENVIRONMENT}/bin:${PATH}"
 ENV PYTHONPATH=/app
