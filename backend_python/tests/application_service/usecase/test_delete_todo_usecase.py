@@ -1,8 +1,6 @@
 from collections.abc import Callable
 from typing import Any, TypeVar
 
-from uuid_utils import UUID, uuid7
-
 from todo_api.application_service.service.transaction_service import TransactionService
 from todo_api.application_service.usecase.delete_todo_usecase import (
     DeleteTodoUsecaseImpl,
@@ -11,6 +9,7 @@ from todo_api.application_service.usecase.delete_todo_usecase import (
 )
 from todo_api.domain.model.todo import Todo
 from todo_api.domain.repository.todo_repository import TodoRepository
+from todo_api.utils.uuid import UUID7, uuid7
 
 ReturnType = TypeVar("ReturnType")
 
@@ -29,13 +28,13 @@ class RecordingTransactionService(TransactionService):
 class RecordingTodoRepository(TodoRepository):
     def __init__(self, todo: Todo) -> None:
         self.todo = todo
-        self.find_by_id_argument: UUID | None = None
+        self.find_by_id_argument: UUID7 | None = None
         self.deleted: list[Todo] = []
 
     def find_all(self) -> list[Todo]:  # pragma: no cover - not used in this test
         raise AssertionError("unexpected call to find_all")
 
-    def find_by_id(self, todo_id: UUID) -> Todo:
+    def find_by_id(self, todo_id: UUID7) -> Todo:
         self.find_by_id_argument = todo_id
         return self.todo
 

@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 
 from todo_api.application_service.usecase.create_todo_usecase import (
@@ -8,6 +6,7 @@ from todo_api.application_service.usecase.create_todo_usecase import (
 )
 from todo_api.domain.model.todo import Todo
 from todo_api.domain.repository.todo_repository import TodoRepository
+from todo_api.utils.uuid import UUID7
 
 
 class TrackingTodoRepository(TodoRepository):
@@ -17,7 +16,7 @@ class TrackingTodoRepository(TodoRepository):
     def find_all(self) -> list[Todo]:  # pragma: no cover - not used in this test
         raise AssertionError("unexpected call to find_all")
 
-    def find_by_id(self, todo_id: UUID) -> Todo:  # pragma: no cover - not used in this test
+    def find_by_id(self, todo_id: UUID7) -> Todo:  # pragma: no cover - not used in this test
         raise AssertionError("unexpected call to find_by_id")
 
     def save(self, todo: Todo) -> None:
