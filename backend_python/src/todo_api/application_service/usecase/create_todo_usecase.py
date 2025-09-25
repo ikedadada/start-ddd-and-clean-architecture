@@ -25,6 +25,10 @@ class CreateTodoUsecase(ABC):
 
 class CreateTodoUsecaseImpl(CreateTodoUsecase):
     def __init__(self, todo_repository: TodoRepository) -> None:
+        """
+        This use case performs a single write, so we rely on the session management
+        layer to control the transaction boundary instead of injecting TransactionService.
+        """
         self.todo_repository = todo_repository
 
     def execute(self, input_dto: CreateTodoUsecaseInput) -> CreateTodoUsecaseOutput:
