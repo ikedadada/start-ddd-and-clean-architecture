@@ -12,26 +12,19 @@ from todo_api.utils.uuid import UUID7
 class TodoRepositoryImpl(TodoRepository):
     def __init__(self, context_provider: ContextProvider[Session]) -> None:
         self.context_provider = context_provider
-        sample_todo_1 = Todo(title="Sample Todo", description="This is a sample todo item.")
-        sample_todo_2 = Todo(title="Another Sample Todo")
-        sample_todo_2.mark_as_completed()
-        self.todos = [
-            sample_todo_1,
-            sample_todo_2,
-        ]
 
     def find_all(self) -> list[Todo]:
         stmt = select(TodoDataModel)
-        with self.context_provider.session() as session:
-            todos = session.scalars(stmt).all()
+        session = self.context_provider.current()
+        todos = session.scalars(stmt).all()
 
         return [todo.to_domain() for todo in todos]
 
     def find_by_id(self, todo_id: UUID7):
         stmt = select(TodoDataModel).where(TodoDataModel.id == str(todo_id))
 
-        with self.context_provider.session() as session:
-            todo_data_model = session.scalars(stmt).one_or_none()
+        session = self.context_provider.current()
+        todo_data_model = session.scalars(stmt).one_or_none()
 
         if todo_data_model is None:
             raise RepositoryNotFoundError(f"Todo with id {todo_id} not found")

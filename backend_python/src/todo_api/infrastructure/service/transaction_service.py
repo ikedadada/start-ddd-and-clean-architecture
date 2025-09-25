@@ -14,17 +14,5 @@ class TransactionServiceImpl(TransactionService):
         self.context_provider = context_provider
 
     def Run(self, func: Callable[[], T]) -> T:
-        with self.context_provider.session() as session:
-            with self.context_provider.use(session):
-                try:
-                    begin_ctx = (
-                        session.begin_nested() if session.in_transaction() else session.begin()
-                    )
-                    with begin_ctx:
-                        result = func()
-                except Exception:
-                    self.context_provider.mark_failure()
-                    raise
-                else:
-                    self.context_provider.mark_success()
-                    return result
+        with self.context_provider.transaction():
+            return func()

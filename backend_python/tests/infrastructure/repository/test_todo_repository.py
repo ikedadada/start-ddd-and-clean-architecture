@@ -22,16 +22,18 @@ class StubContextProvider(ContextProvider[Session]):
         self._session: ContextVar[Session | None] = ContextVar("stub_session", default=None)
 
     @contextmanager
-    def session(self):
+    def transaction(self):
         existing = self._session.get()
         if existing is not None:
-            yield existing
+            with existing.begin_nested():
+                yield existing
             return
 
         session = self._session_factory()
         token = self._session.set(session)
         try:
-            yield session
+            with session.begin():
+                yield session
         finally:
             self._session.reset(token)
             session.close()
@@ -41,14 +43,6 @@ class StubContextProvider(ContextProvider[Session]):
         if session is None:
             raise RuntimeError("No active session bound to context provider")
         return session
-
-    @contextmanager
-    def use(self, context: Session):
-        token = self._session.set(context)
-        try:
-            yield
-        finally:
-            self._session.reset(token)
 
 
 @pytest.fixture()
@@ -62,10 +56,8 @@ def todo_repository(stub_context_provider: StubContextProvider) -> TodoRepositor
 
 
 def run_in_transaction(provider: StubContextProvider, func: Callable[[], None]) -> None:
-    with provider.session() as session:
-        with provider.use(session):
-            with session.begin():
-                func()
+    with provider.transaction():
+        func()
 
 
 def test_save_inserts_new_row(
@@ -119,6 +111,7 @@ def test_save_updates_existing_row(
 
 def test_find_all_returns_domain_objects(
     mysql_engine: Engine,
+    stub_context_provider: StubContextProvider,
     todo_repository: TodoRepositoryImpl,
 ) -> None:
     todo = Todo(title="list")
@@ -134,7 +127,8 @@ def test_find_all_returns_domain_objects(
             )
         )
 
-    todos = todo_repository.find_all()
+    with stub_context_provider.transaction():
+        todos = todo_repository.find_all()
 
     assert len(todos) == 1
     assert todos[0].id == todo.id
@@ -142,6 +136,7 @@ def test_find_all_returns_domain_objects(
 
 def test_find_by_id_returns_matching_todo(
     mysql_engine: Engine,
+    stub_context_provider: StubContextProvider,
     todo_repository: TodoRepositoryImpl,
 ) -> None:
     todo = Todo(title="fetch")
@@ -157,16 +152,19 @@ def test_find_by_id_returns_matching_todo(
             )
         )
 
-    fetched = todo_repository.find_by_id(todo.id)
+    with stub_context_provider.transaction():
+        fetched = todo_repository.find_by_id(todo.id)
 
     assert fetched.id == todo.id
 
 
 def test_find_by_id_raises_when_missing(
+    stub_context_provider: StubContextProvider,
     todo_repository: TodoRepositoryImpl,
 ) -> None:
-    with pytest.raises(RepositoryNotFoundError):
-        todo_repository.find_by_id(Todo(title="temp").id)
+    with stub_context_provider.transaction():
+        with pytest.raises(RepositoryNotFoundError):
+            todo_repository.find_by_id(Todo(title="temp").id)
 
 
 def test_delete_removes_row(
@@ -189,5 +187,6 @@ def test_delete_removes_row(
 
     run_in_transaction(stub_context_provider, lambda: todo_repository.delete(todo))
 
-    with pytest.raises(RepositoryNotFoundError):
-        todo_repository.find_by_id(todo.id)
+    with stub_context_provider.transaction():
+        with pytest.raises(RepositoryNotFoundError):
+            todo_repository.find_by_id(todo.id)

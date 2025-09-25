@@ -25,16 +25,8 @@ class SessionMiddleware(BaseHTTPMiddleware):
         request: Request,
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
-        with self._context_provider.session() as session:
-            with self._context_provider.use(session):
-                try:
-                    response = await call_next(request)
-                except Exception:
-                    self._context_provider.mark_failure()
-                    raise
-                else:
-                    if response.status_code < 400:
-                        self._context_provider.mark_success()
-                    else:
-                        self._context_provider.mark_failure()
-                    return response
+        with self._context_provider.transaction() as session:
+            response = await call_next(request)
+            if response.status_code >= 400 and session.in_transaction():
+                session.rollback()
+            return response

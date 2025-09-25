@@ -1,169 +1,134 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
-from contextlib import contextmanager
-from contextvars import ContextVar
 from uuid import uuid4
 
 import pytest
-from sqlalchemy import Engine, insert
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy import Engine, Table, insert, select
+from sqlalchemy.orm import Session
 
-from todo_api.domain.repository.context_provider import ContextProvider
 from todo_api.infrastructure.repository.context_provider import ContextProviderImpl
-from todo_api.infrastructure.repository.data_model.todo import TodoDataModel
 from todo_api.infrastructure.service.transaction_service import TransactionServiceImpl
 
 
-class StubContextProvider(ContextProvider[Session]):
-    def __init__(self, engine: Engine) -> None:
-        self._session_factory = sessionmaker(bind=engine, expire_on_commit=False)
-        self._session: ContextVar[Session | None] = ContextVar("stub_session", default=None)
-
-    @contextmanager
-    def session(self) -> Iterator[Session]:
-        existing = self._session.get()
-        if existing is not None:
-            yield existing
-            return
-
-        session = self._session_factory()
-        token = self._session.set(session)
-        try:
-            yield session
-        finally:
-            self._session.reset(token)
-            session.close()
-
-    def current(self) -> Session:
-        session = self._session.get()
-        if session is None:
-            raise RuntimeError("No active session bound to context provider")
-        return session
-
-    @contextmanager
-    def use(self, context: Session) -> Iterator[None]:
-        token = self._session.set(context)
-        try:
-            yield
-        finally:
-            self._session.reset(token)
+@pytest.fixture()
+def context_provider(mysql_engine: Engine) -> ContextProviderImpl:
+    return ContextProviderImpl(engine=mysql_engine)
 
 
 @pytest.fixture()
-def stub_context_provider(mysql_engine: Engine) -> StubContextProvider:
-    return StubContextProvider(mysql_engine)
+def transaction_service(context_provider: ContextProviderImpl) -> TransactionServiceImpl:
+    return TransactionServiceImpl(context_provider)
 
 
-@pytest.fixture()
-def transaction_service(stub_context_provider: StubContextProvider) -> TransactionServiceImpl:
-    return TransactionServiceImpl(stub_context_provider)
-
-
-def test_transaction_service_commits_changes(
-    stub_context_provider: StubContextProvider,
+def test_run_commits_on_success(
     transaction_service: TransactionServiceImpl,
+    context_provider: ContextProviderImpl,
+    mysql_engine: Engine,
+    infrastructure_test_table: Table,
 ) -> None:
-    todo_data: dict[str, str | bool] = {
-        "id": str(uuid4()),
-        "title": "commit",
-        "description": "persist via transaction",
-        "completed": False,
-    }
+    value = f"commit-{uuid4()}"
 
     def persist() -> None:
-        session = stub_context_provider.current()
-        session.execute(insert(TodoDataModel).values(**todo_data))
+        session = context_provider.current()
+        session.execute(insert(infrastructure_test_table).values(scope="impl", value=value))
 
     transaction_service.Run(persist)
 
-    with stub_context_provider.session() as session:
-        stored = session.get(TodoDataModel, todo_data["id"])
+    with Session(mysql_engine) as check_session:
+        stored = check_session.execute(
+            select(infrastructure_test_table.c.value).where(
+                infrastructure_test_table.c.value == value
+            )
+        ).scalar_one_or_none()
 
-    assert stored is not None
-    assert stored.title == todo_data["title"]
-    assert stored.description == todo_data["description"]
-    assert stored.completed is todo_data["completed"]
+    assert stored == value
 
 
-def test_transaction_service_rolls_back_on_error(
-    stub_context_provider: StubContextProvider,
+def test_run_rolls_back_on_exception(
     transaction_service: TransactionServiceImpl,
+    context_provider: ContextProviderImpl,
+    mysql_engine: Engine,
+    infrastructure_test_table: Table,
 ) -> None:
-    todo_data: dict[str, str | bool] = {
-        "id": str(uuid4()),
-        "title": "rollback",
-        "description": "should not persist",
-        "completed": False,
-    }
+    value = f"rollback-{uuid4()}"
 
     def failing() -> None:
-        session = stub_context_provider.current()
-        session.execute(insert(TodoDataModel).values(**todo_data))
+        session = context_provider.current()
+        session.execute(insert(infrastructure_test_table).values(scope="impl", value=value))
         raise RuntimeError("boom")
 
     with pytest.raises(RuntimeError):
         transaction_service.Run(failing)
 
-    with stub_context_provider.session() as session:
-        result = session.get(TodoDataModel, todo_data["id"])
+    with Session(mysql_engine) as check_session:
+        stored = check_session.execute(
+            select(infrastructure_test_table.c.value).where(
+                infrastructure_test_table.c.value == value
+            )
+        ).scalar_one_or_none()
 
-    assert result is None
+    assert stored is None
 
 
-@pytest.fixture()
-def context_provider_impl(mysql_engine: Engine) -> ContextProviderImpl:
-    return ContextProviderImpl(engine=mysql_engine)
-
-
-def test_transaction_service_commits_with_context_provider_impl(
+def test_run_supports_nested_transactions(
+    transaction_service: TransactionServiceImpl,
+    context_provider: ContextProviderImpl,
     mysql_engine: Engine,
-    context_provider_impl: ContextProviderImpl,
+    infrastructure_test_table: Table,
 ) -> None:
-    service = TransactionServiceImpl(context_provider_impl)
-    todo_data: dict[str, str | bool] = {
-        "id": str(uuid4()),
-        "title": "commit",
-        "description": "persist via context provider impl",
-        "completed": False,
-    }
+    outer_before = f"outer-before-{uuid4()}"
+    inner_value = f"inner-{uuid4()}"
+    outer_after = f"outer-after-{uuid4()}"
 
-    def persist() -> None:
-        session = context_provider_impl.current()
-        session.execute(insert(TodoDataModel).values(**todo_data))
+    with context_provider.transaction() as outer_session:
+        outer_session.execute(
+            insert(infrastructure_test_table).values(scope="outer", value=outer_before)
+        )
 
-    service.Run(persist)
+        def nested() -> None:
+            session = context_provider.current()
+            session.execute(
+                insert(infrastructure_test_table).values(scope="inner", value=inner_value)
+            )
+            raise RuntimeError("nested rollback")
 
-    with Session(mysql_engine) as session:
-        stored = session.get(TodoDataModel, todo_data["id"])
+        with pytest.raises(RuntimeError):
+            transaction_service.Run(nested)
 
-    assert stored is not None
-    assert stored.title == todo_data["title"]
-    assert stored.description == todo_data["description"]
-    assert stored.completed is todo_data["completed"]
+        inner_rows = (
+            outer_session.execute(
+                select(infrastructure_test_table.c.value).where(
+                    infrastructure_test_table.c.scope == "inner"
+                )
+            )
+            .scalars()
+            .all()
+        )
+        assert inner_rows == []
 
+        outer_session.execute(
+            insert(infrastructure_test_table).values(scope="outer", value=outer_after)
+        )
 
-def test_transaction_service_rolls_back_with_context_provider_impl(
-    mysql_engine: Engine,
-    context_provider_impl: ContextProviderImpl,
-) -> None:
-    service = TransactionServiceImpl(context_provider_impl)
-    todo_data: dict[str, str | bool] = {
-        "id": str(uuid4()),
-        "title": "rollback",
-        "description": "should not persist with context provider impl",
-        "completed": False,
-    }
+    with Session(mysql_engine) as check_session:
+        outer_rows = (
+            check_session.execute(
+                select(infrastructure_test_table.c.value).where(
+                    infrastructure_test_table.c.scope == "outer"
+                )
+            )
+            .scalars()
+            .all()
+        )
+        inner_rows = (
+            check_session.execute(
+                select(infrastructure_test_table.c.value).where(
+                    infrastructure_test_table.c.scope == "inner"
+                )
+            )
+            .scalars()
+            .all()
+        )
 
-    def failing() -> None:
-        session = context_provider_impl.current()
-        session.execute(insert(TodoDataModel).values(**todo_data))
-        raise RuntimeError("boom")
-
-    with pytest.raises(RuntimeError):
-        service.Run(failing)
-
-    with Session(mysql_engine) as session:
-        result = session.get(TodoDataModel, todo_data["id"])
-
-    assert result is None
+    assert set(outer_rows) == {outer_before, outer_after}
+    assert inner_rows == []
