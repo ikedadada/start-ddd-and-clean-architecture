@@ -22,5 +22,5 @@ pre-commit:
       stage_fixed: true
       run: |
         cd backend_python
-        uv run ruff check .
         uv run ruff format .
+        uv run ruff check .
