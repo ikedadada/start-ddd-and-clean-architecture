@@ -34,7 +34,9 @@ from todo_api.presentation.router.todo_router import TodoRouterContainer
 from todo_api.presentation.router.todo_router import router as todo_router
 
 app = FastAPI()
-DATABASE_URL = environ.get("DATABASE_URL", "sqlite:///./test.db")
+DATABASE_URL = environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is required")
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True is for debugging
 
 # Infrastructure layer services
