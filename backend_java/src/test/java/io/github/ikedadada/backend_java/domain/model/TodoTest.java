@@ -44,12 +44,12 @@ class TodoTest {
         Todo todo = new Todo("practice", null);
 
         todo.markAsCompleted();
-        todo.markAsUndone();
+        todo.markAsNotCompleted();
         assertFalse(todo.isCompleted());
 
         DomainException.TodoNotCompleted ex = assertThrows(
                 DomainException.TodoNotCompleted.class,
-                todo::markAsUndone);
+                todo::markAsNotCompleted);
         assertTrue(ex.getMessage().contains(todo.getId().toString()));
     }
 

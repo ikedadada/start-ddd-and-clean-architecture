@@ -54,7 +54,7 @@ public class Todo {
         this.completed = true;
     }
 
-    public void markAsUndone() {
+    public void markAsNotCompleted() {
         if (!completed) {
             throw new DomainException.TodoNotCompleted(this);
         }

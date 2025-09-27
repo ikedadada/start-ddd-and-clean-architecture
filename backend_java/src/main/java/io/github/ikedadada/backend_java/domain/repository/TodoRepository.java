@@ -12,5 +12,5 @@ public interface TodoRepository {
 
     void save(Todo todo);
 
-    void delete(UUID id);
+    void delete(Todo todo);
 }

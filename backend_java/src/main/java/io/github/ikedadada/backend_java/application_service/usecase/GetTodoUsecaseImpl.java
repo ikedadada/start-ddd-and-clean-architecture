@@ -1,0 +1,20 @@
+package io.github.ikedadada.backend_java.application_service.usecase;
+
+import java.util.UUID;
+
+import io.github.ikedadada.backend_java.domain.model.Todo;
+import io.github.ikedadada.backend_java.domain.repository.TodoRepository;
+
+public class GetTodoUsecaseImpl implements GetTodoUsecase {
+    private final TodoRepository todoRepository;
+
+    public GetTodoUsecaseImpl(TodoRepository todoRepository) {
+        this.todoRepository = todoRepository;
+    }
+
+    @Override
+    public Todo handle(UUID id) {
+        return todoRepository.findById(id);
+    }
+
+}
