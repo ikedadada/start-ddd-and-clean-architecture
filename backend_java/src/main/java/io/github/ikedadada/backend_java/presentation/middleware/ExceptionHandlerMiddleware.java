@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
@@ -27,6 +28,12 @@ public class ExceptionHandlerMiddleware {
     public ResponseEntity<ErrorResponse> handleHttpException(HttpException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getStatusCode().value(), ex.getMessage());
         return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(400, "Bad Request: " + ex);
+        return ResponseEntity.status(400).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
