@@ -1,4 +1,19 @@
 services:
+  java:
+    build:
+      context: ./backend_java
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./backend_java:/app
+    environment:
+      - DATABASE_URL=jdbc:mysql://db:3306/todo_api
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      db:
+        condition: service_healthy
   python:
     build:
       context: ./backend_python
