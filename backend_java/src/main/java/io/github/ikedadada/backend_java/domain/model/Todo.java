@@ -73,11 +73,11 @@ public class Todo {
         public String description;
         public boolean completed;
 
-        public DTO(Todo todo) {
-            this.id = todo.getId();
-            this.title = todo.getTitle();
-            this.description = todo.getDescription().orElse(null);
-            this.completed = todo.isCompleted();
+        public DTO(UUID id, String title, @Nullable String description, boolean completed) {
+            this.id = id;
+            this.title = title;
+            this.description = description;
+            this.completed = completed;
         }
 
         public Todo toDomain() {

@@ -70,7 +70,8 @@ class TodoTest {
         Todo original = new Todo("dto", "round trip");
         original.markAsCompleted();
 
-        Todo.DTO dto = new Todo.DTO(original);
+        Todo.DTO dto = new Todo.DTO(original.getId(), original.getTitle(), original.getDescription().orElse(null),
+                original.isCompleted());
         Todo restored = dto.toDomain();
 
         assertEquals(original.getId(), dto.id);
@@ -96,7 +97,8 @@ class TodoTest {
     @DisplayName("DTO to domain requires non null id")
     void dtoToDomainRequiresNonNullId() {
         Todo todo = new Todo("dummy", "desc");
-        Todo.DTO dto = new Todo.DTO(todo);
+        Todo.DTO dto = new Todo.DTO(todo.getId(), todo.getTitle(), todo.getDescription().orElse(null),
+                todo.isCompleted());
         dto.id = null;
 
         assertThrows(NullPointerException.class, dto::toDomain);
@@ -106,7 +108,8 @@ class TodoTest {
     @DisplayName("DTO to domain requires non null title")
     void dtoToDomainRequiresNonNullTitle() {
         Todo todo = new Todo("dummy", "desc");
-        Todo.DTO dto = new Todo.DTO(todo);
+        Todo.DTO dto = new Todo.DTO(todo.getId(), todo.getTitle(), todo.getDescription().orElse(null),
+                todo.isCompleted());
         dto.title = null;
 
         assertThrows(NullPointerException.class, dto::toDomain);
