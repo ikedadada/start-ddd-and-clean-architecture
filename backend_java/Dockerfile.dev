@@ -12,6 +12,8 @@ RUN chmod +x mvnw \
 
 COPY src ./src
 
-EXPOSE 8080
+ENV SPRING_DEVTOOLS_RESTART_ENABLED=true
+
+EXPOSE 3000
 
 CMD ["./mvnw", "spring-boot:run"]

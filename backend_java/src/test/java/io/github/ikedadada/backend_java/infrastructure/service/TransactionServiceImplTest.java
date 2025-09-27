@@ -3,6 +3,7 @@ package io.github.ikedadada.backend_java.infrastructure.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,11 @@ class TransactionServiceImplTest {
     @Autowired
     private TransactionService transactionService;
 
+    private int countRecords() {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM transaction_test_records", Integer.class);
+        return Objects.requireNonNull(count);
+    }
+
     @BeforeEach
     void resetDatabase() {
         jdbcTemplate.execute("DROP TABLE IF EXISTS transaction_test_records");
@@ -56,7 +62,7 @@ class TransactionServiceImplTest {
 
     @Test
     void runSupplierCommitsTransaction() {
-        int initialCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM transaction_test_records", Integer.class);
+        int initialCount = countRecords();
 
         String result = transactionService.run(() -> {
             jdbcTemplate.update(
@@ -66,7 +72,7 @@ class TransactionServiceImplTest {
             return "done";
         });
 
-        int updatedCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM transaction_test_records", Integer.class);
+        int updatedCount = countRecords();
 
         assertThat(result).isEqualTo("done");
         assertThat(updatedCount).isEqualTo(initialCount + 1);
@@ -74,7 +80,7 @@ class TransactionServiceImplTest {
 
     @Test
     void runRunnableRollsBackOnException() {
-        int initialCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM transaction_test_records", Integer.class);
+        int initialCount = countRecords();
 
         assertThrows(RuntimeException.class, () -> transactionService.run(() -> {
             jdbcTemplate.update(
@@ -84,8 +90,7 @@ class TransactionServiceImplTest {
             throw new RuntimeException("boom");
         }));
 
-        int countAfterRollback = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM transaction_test_records",
-                Integer.class);
+        int countAfterRollback = countRecords();
 
         assertThat(countAfterRollback).isEqualTo(initialCount);
     }
