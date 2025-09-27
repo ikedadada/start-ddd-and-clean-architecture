@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,20 +33,30 @@ import jakarta.validation.constraints.NotNull;
 
 @RestController
 public class TodoController {
-    @Autowired
-    private CreateTodoUsecase createTodoUsecase;
-    @Autowired
-    private GetAllTodosUsecase getAllTodosUsecase;
-    @Autowired
-    private GetTodoUsecase getTodoUsecase;
-    @Autowired
-    private UpdateTodoUsecase updateTodoUsecase;
-    @Autowired
-    private MarkAsCompletedTodoUsecase markAsCompletedTodoUsecase;
-    @Autowired
-    private MarkAsNotCompletedTodoUsecase markAsNotCompletedTodoUsecase;
-    @Autowired
-    private DeleteTodoUsecase deleteTodoUsecase;
+    private final CreateTodoUsecase createTodoUsecase;
+    private final GetAllTodosUsecase getAllTodosUsecase;
+    private final GetTodoUsecase getTodoUsecase;
+    private final UpdateTodoUsecase updateTodoUsecase;
+    private final MarkAsCompletedTodoUsecase markAsCompletedTodoUsecase;
+    private final MarkAsNotCompletedTodoUsecase markAsNotCompletedTodoUsecase;
+    private final DeleteTodoUsecase deleteTodoUsecase;
+
+    public TodoController(
+            CreateTodoUsecase createTodoUsecase,
+            GetAllTodosUsecase getAllTodosUsecase,
+            GetTodoUsecase getTodoUsecase,
+            UpdateTodoUsecase updateTodoUsecase,
+            MarkAsCompletedTodoUsecase markAsCompletedTodoUsecase,
+            MarkAsNotCompletedTodoUsecase markAsNotCompletedTodoUsecase,
+            DeleteTodoUsecase deleteTodoUsecase) {
+        this.createTodoUsecase = createTodoUsecase;
+        this.getAllTodosUsecase = getAllTodosUsecase;
+        this.getTodoUsecase = getTodoUsecase;
+        this.updateTodoUsecase = updateTodoUsecase;
+        this.markAsCompletedTodoUsecase = markAsCompletedTodoUsecase;
+        this.markAsNotCompletedTodoUsecase = markAsNotCompletedTodoUsecase;
+        this.deleteTodoUsecase = deleteTodoUsecase;
+    }
 
     private static String resolveDescription(Optional<String> description) {
         return description != null ? description.orElse(null) : null;

@@ -2,7 +2,6 @@ package io.github.ikedadada.backend_java.application_service.usecase;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.github.ikedadada.backend_java.application_service.service.TransactionService;
@@ -12,10 +11,8 @@ import jakarta.annotation.Nullable;
 
 @Component
 public class UpdateTodoUsecaseImpl implements UpdateTodoUsecase {
-    @Autowired
-    private TodoRepository todoRepository;
-    @Autowired
-    private TransactionService transactionService;
+    private final TodoRepository todoRepository;
+    private final TransactionService transactionService;
 
     public UpdateTodoUsecaseImpl(TodoRepository todoRepository, TransactionService transactionService) {
         this.todoRepository = todoRepository;

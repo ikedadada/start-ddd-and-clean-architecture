@@ -2,7 +2,6 @@ package io.github.ikedadada.backend_java.infrastructure.repository;
 
 import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +11,11 @@ import io.github.ikedadada.backend_java.domain.repository.TodoRepository;
 
 @Component
 public class TodoRepositoryImpl implements TodoRepository {
-    @Autowired
-    private NamedParameterJdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+
+    public TodoRepositoryImpl(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public ArrayList<Todo> findAll() {
