@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -38,7 +39,7 @@ class MarkAsNotCompletedTodoUsecaseImplTest {
     @SuppressWarnings("unchecked")
     @Test
     void handleMarksTodoNotCompletedAndSaves() {
-        Todo todo = new Todo("reopen", "mark undone");
+        Todo todo = new Todo("reopen", Optional.of("mark undone"));
         todo.markAsCompleted();
         UUID id = todo.getId();
         when(todoRepository.findById(id)).thenReturn(todo);

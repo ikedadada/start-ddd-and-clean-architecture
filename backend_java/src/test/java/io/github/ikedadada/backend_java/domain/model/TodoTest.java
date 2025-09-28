@@ -16,7 +16,7 @@ class TodoTest {
     @Test
     @DisplayName("Newly created todo keeps id and description and starts incomplete")
     void constructorInitializesFields() {
-        Todo todo = new Todo("study DDD", "read chapter 1");
+        Todo todo = new Todo("study DDD", Optional.of("read chapter 1"));
 
         assertNotNull(todo.getId());
         assertEquals("study DDD", todo.getTitle());
@@ -27,7 +27,7 @@ class TodoTest {
     @Test
     @DisplayName("Todo can be marked completed and double completion throws")
     void markAsCompleted() {
-        Todo todo = new Todo("write tests", "mark completion");
+        Todo todo = new Todo("write tests", Optional.of("mark completion"));
 
         todo.markAsCompleted();
         assertTrue(todo.isCompleted());
@@ -56,9 +56,9 @@ class TodoTest {
     @Test
     @DisplayName("Updating applies new title and description")
     void updateChangesFields() {
-        Todo todo = new Todo("initial", "initial description");
+        Todo todo = new Todo("initial", Optional.of("initial description"));
 
-        todo.update("updated", null);
+        todo.update("updated", Optional.empty());
 
         assertEquals("updated", todo.getTitle());
         assertEquals(Optional.empty(), todo.getDescription());
@@ -67,7 +67,7 @@ class TodoTest {
     @Test
     @DisplayName("DTO round trip preserves values")
     void dtoRoundTripRetainsValues() {
-        Todo original = new Todo("dto", "round trip");
+        Todo original = new Todo("dto", Optional.of("round trip"));
         original.markAsCompleted();
 
         Todo.DTO dto = new Todo.DTO(original.getId(), original.getTitle(), original.getDescription().orElse(null),
@@ -88,15 +88,15 @@ class TodoTest {
     @Test
     @DisplayName("Updating with null title throws NullPointerException")
     void updateWithNullTitleThrowsException() {
-        Todo todo = new Todo("title", "desc");
+        Todo todo = new Todo("title", Optional.of("desc"));
 
-        assertThrows(NullPointerException.class, () -> todo.update(null, "desc"));
+        assertThrows(NullPointerException.class, () -> todo.update(null, Optional.of("desc")));
     }
 
     @Test
     @DisplayName("DTO to domain requires non null id")
     void dtoToDomainRequiresNonNullId() {
-        Todo todo = new Todo("dummy", "desc");
+        Todo todo = new Todo("dummy", Optional.of("desc"));
         Todo.DTO dto = new Todo.DTO(todo.getId(), todo.getTitle(), todo.getDescription().orElse(null),
                 todo.isCompleted());
         dto.id = null;
@@ -107,7 +107,7 @@ class TodoTest {
     @Test
     @DisplayName("DTO to domain requires non null title")
     void dtoToDomainRequiresNonNullTitle() {
-        Todo todo = new Todo("dummy", "desc");
+        Todo todo = new Todo("dummy", Optional.of("desc"));
         Todo.DTO dto = new Todo.DTO(todo.getId(), todo.getTitle(), todo.getDescription().orElse(null),
                 todo.isCompleted());
         dto.title = null;

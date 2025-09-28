@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Connection;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -90,7 +91,7 @@ class TodoRepositoryImplTest {
 
     @Test
     void saveInsertsNewTodo() throws RepositoryException.TodoNotFound {
-        Todo newTodo = new Todo("Write tests", "Cover repository layer with Testcontainers");
+        Todo newTodo = new Todo("Write tests", Optional.of("Cover repository layer with Testcontainers"));
 
         todoRepository.save(newTodo);
 

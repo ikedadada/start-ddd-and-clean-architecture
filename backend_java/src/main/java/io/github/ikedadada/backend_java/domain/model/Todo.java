@@ -16,18 +16,17 @@ public class Todo {
     }
     private UUID id;
     private String title;
-    @Nullable
-    private String description;
+    private Optional<String> description;
     private boolean completed;
 
-    private Todo(UUID id, String title, String description, boolean completed) {
+    private Todo(UUID id, String title, Optional<String> description, boolean completed) {
         this.id = Objects.requireNonNull(id);
         this.title = Objects.requireNonNull(title);
         this.description = description;
         this.completed = completed;
     }
 
-    public Todo(String title, String description) {
+    public Todo(String title, Optional<String> description) {
         this(GENERATOR.generate(), title, description, false);
     }
 
@@ -40,7 +39,7 @@ public class Todo {
     }
 
     public Optional<String> getDescription() {
-        return Optional.ofNullable(description);
+        return description;
     }
 
     public boolean isCompleted() {
@@ -61,7 +60,7 @@ public class Todo {
         this.completed = false;
     }
 
-    public void update(String title, @Nullable String description) {
+    public void update(String title, Optional<String> description) {
         this.title = Objects.requireNonNull(title);
         this.description = description;
     }
@@ -81,7 +80,7 @@ public class Todo {
         }
 
         public Todo toDomain() {
-            Todo todo = new Todo(id, title, description, completed);
+            Todo todo = new Todo(id, title, Optional.ofNullable(description), completed);
             return todo;
         }
     }

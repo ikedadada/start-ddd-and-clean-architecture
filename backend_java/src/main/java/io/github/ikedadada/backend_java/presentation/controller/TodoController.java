@@ -58,10 +58,6 @@ public class TodoController {
         this.deleteTodoUsecase = deleteTodoUsecase;
     }
 
-    private static String resolveDescription(Optional<String> description) {
-        return description != null ? description.orElse(null) : null;
-    }
-
     private static class CreateTodoRequest {
         @NotNull
         public String title;
@@ -87,7 +83,7 @@ public class TodoController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public CreateTodoResponse createTodo(@RequestBody @Valid CreateTodoRequest request) {
-        Todo todo = createTodoUsecase.handle(request.title, resolveDescription(request.description));
+        Todo todo = createTodoUsecase.handle(request.title, request.description);
         return new CreateTodoResponse(todo);
     }
 
@@ -177,7 +173,7 @@ public class TodoController {
             @RequestBody @Valid UpdateTodoRequest request)
             throws HttpException.NotFound {
         try {
-            Todo todo = updateTodoUsecase.handle(id, request.title, resolveDescription(request.description));
+            Todo todo = updateTodoUsecase.handle(id, request.title, request.description);
             return new UpdateTodoResponse(todo);
         } catch (RepositoryException.TodoNotFound e) {
             throw new HttpException.NotFound(e.getMessage());

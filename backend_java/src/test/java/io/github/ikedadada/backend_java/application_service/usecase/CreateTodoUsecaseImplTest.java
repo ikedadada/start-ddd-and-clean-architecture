@@ -1,6 +1,8 @@
 package io.github.ikedadada.backend_java.application_service.usecase;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
@@ -25,7 +27,7 @@ class CreateTodoUsecaseImplTest {
 
     @Test
     void handleCreatesAndSavesTodo() {
-        Todo result = usecase.handle("new todo", "study application service tests");
+        Todo result = usecase.handle("new todo", Optional.of("study application service tests"));
 
         assertNotNull(result.getId());
         assertEquals("new todo", result.getTitle());

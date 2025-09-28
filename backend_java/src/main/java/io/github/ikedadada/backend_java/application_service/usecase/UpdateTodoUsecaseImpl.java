@@ -1,5 +1,6 @@
 package io.github.ikedadada.backend_java.application_service.usecase;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Component;
 import io.github.ikedadada.backend_java.application_service.service.TransactionService;
 import io.github.ikedadada.backend_java.domain.model.Todo;
 import io.github.ikedadada.backend_java.domain.repository.TodoRepository;
-import jakarta.annotation.Nullable;
 
 @Component
 public class UpdateTodoUsecaseImpl implements UpdateTodoUsecase {
@@ -20,7 +20,7 @@ public class UpdateTodoUsecaseImpl implements UpdateTodoUsecase {
     }
 
     @Override
-    public Todo handle(UUID id, String title, @Nullable String description) {
+    public Todo handle(UUID id, String title, Optional<String> description) {
         return transactionService.run(() -> {
             Todo todo = todoRepository.findById(id);
             todo.update(title, description);

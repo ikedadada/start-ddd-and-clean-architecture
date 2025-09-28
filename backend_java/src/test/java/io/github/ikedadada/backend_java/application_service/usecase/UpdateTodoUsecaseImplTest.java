@@ -40,7 +40,7 @@ class UpdateTodoUsecaseImplTest {
     @Test
     void handleUpdatesTodoAndSavesIt() {
         UUID id = UUID.randomUUID();
-        Todo existing = new Todo("old", "old description");
+        Todo existing = new Todo("old", Optional.of("old description"));
         when(todoRepository.findById(id)).thenReturn(existing);
         when(transactionService.run(any(Supplier.class))).thenAnswer(invocation -> {
             Supplier<Todo> supplier = invocation.getArgument(0);

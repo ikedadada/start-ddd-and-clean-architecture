@@ -1,5 +1,7 @@
 package io.github.ikedadada.backend_java.application_service.usecase;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import io.github.ikedadada.backend_java.domain.model.Todo;
@@ -14,7 +16,7 @@ public class CreateTodoUsecaseImpl implements CreateTodoUsecase {
     }
 
     @Override
-    public Todo handle(String title, String description) {
+    public Todo handle(String title, Optional<String> description) {
         Todo todo = new Todo(title, description);
         todoRepository.save(todo);
         return todo;

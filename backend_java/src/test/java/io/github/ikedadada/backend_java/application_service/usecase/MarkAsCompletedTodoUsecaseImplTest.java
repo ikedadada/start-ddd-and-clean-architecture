@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -38,7 +39,7 @@ class MarkAsCompletedTodoUsecaseImplTest {
     @SuppressWarnings("unchecked")
     @Test
     void handleMarksTodoCompletedAndSaves() {
-        Todo todo = new Todo("finish", "mark completed");
+        Todo todo = new Todo("finish", Optional.of("mark completed"));
         UUID id = todo.getId();
         when(todoRepository.findById(id)).thenReturn(todo);
         when(transactionService.run(any(Supplier.class))).thenAnswer(invocation -> {

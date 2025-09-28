@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class GetTodoUsecaseImplTest {
     @Test
     void handleReturnsTodoFromRepository() {
         UUID id = UUID.randomUUID();
-        Todo todo = new Todo("read", "chapter 2");
+        Todo todo = new Todo("read", Optional.of("chapter 2"));
         when(todoRepository.findById(id)).thenReturn(todo);
 
         Todo result = usecase.handle(id);
