@@ -22,7 +22,7 @@ public class Todo {
     private Todo(UUID id, String title, Optional<String> description, boolean completed) {
         this.id = Objects.requireNonNull(id);
         this.title = Objects.requireNonNull(title);
-        this.description = description;
+        this.description = normalizeDescription(description);
         this.completed = completed;
     }
 
@@ -62,7 +62,11 @@ public class Todo {
 
     public void update(String title, Optional<String> description) {
         this.title = Objects.requireNonNull(title);
-        this.description = description;
+        this.description = normalizeDescription(description);
+    }
+
+    private static Optional<String> normalizeDescription(Optional<String> description) {
+        return description != null ? description : Optional.empty();
     }
 
     public static final class DTO {

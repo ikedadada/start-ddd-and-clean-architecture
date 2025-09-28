@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import io.github.ikedadada.backend_java.application_service.usecase.CreateTodoUsecase;
 import io.github.ikedadada.backend_java.application_service.usecase.DeleteTodoUsecase;
 import io.github.ikedadada.backend_java.application_service.usecase.GetAllTodosUsecase;
@@ -61,7 +64,9 @@ public class TodoController {
     private static class CreateTodoRequest {
         @NotNull
         public String title;
-        public Optional<String> description;
+
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+        public Optional<String> description = Optional.empty();
     }
 
     @SuppressWarnings("unused")
@@ -149,7 +154,9 @@ public class TodoController {
     private static class UpdateTodoRequest {
         @NotNull
         public String title;
-        public Optional<String> description;
+
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+        public Optional<String> description = Optional.empty();
     }
 
     @SuppressWarnings("unused")

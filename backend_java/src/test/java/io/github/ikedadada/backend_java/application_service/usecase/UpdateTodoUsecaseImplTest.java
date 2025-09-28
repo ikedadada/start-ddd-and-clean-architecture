@@ -47,7 +47,7 @@ class UpdateTodoUsecaseImplTest {
             return supplier.get();
         });
 
-        Todo updated = usecase.handle(id, "new title", null);
+        Todo updated = usecase.handle(id, "new title", Optional.empty());
 
         assertSame(existing, updated);
         assertEquals("new title", updated.getTitle());

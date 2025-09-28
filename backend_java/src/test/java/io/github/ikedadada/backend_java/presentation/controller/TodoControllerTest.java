@@ -211,6 +211,28 @@ class TodoControllerTest {
         }
 
         @Test
+        void updateTodoWithoutDescriptionUsesEmptyOptional() throws Exception {
+                UUID id = UUID.randomUUID();
+                Todo updated = todo(id, "updated", null, false);
+                when(updateTodoUsecase.handle(eq(id), eq("updated"), eq(Optional.empty()))).thenReturn(updated);
+
+                var request = new java.util.HashMap<String, Object>();
+                request.put("title", "updated");
+
+                mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                .put("/todos/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status()
+                                                .isOk())
+                                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers
+                                                .jsonPath("$.id")
+                                                .value(id.toString()));
+
+                verify(updateTodoUsecase).handle(eq(id), eq("updated"), eq(Optional.empty()));
+        }
+
+        @Test
         void updateTodoReturnsNotFoundWhenMissing() throws Exception {
                 UUID id = UUID.randomUUID();
                 when(updateTodoUsecase.handle(eq(id), eq("title"), any()))
