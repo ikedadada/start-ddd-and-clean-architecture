@@ -24,3 +24,11 @@ pre-commit:
         cd backend_python
         uv run ruff format .
         uv run ruff check .
+    rust:
+      glob: "backend_rust/**/*.{rs,toml}"
+      stage_fixed: true
+      run: |
+        cd backend_rust
+        cargo fmt
+        cargo clippy -- -D warnings
+        cargo test
