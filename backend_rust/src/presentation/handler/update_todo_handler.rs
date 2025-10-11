@@ -2,13 +2,14 @@ use std::sync::Arc;
 
 use axum::Json;
 use serde::Deserialize;
+use uuid::Uuid;
 use validator::Validate;
 
 use crate::application::service::transaction_service::TransactionService;
 use crate::application::usecase::update_todo_usecase::{UpdateTodoInput, UpdateTodoUsecase};
 use crate::domain::model::todo::TodoDto;
 use crate::presentation::error::AppError;
-use crate::presentation::handler::path::TodoPathParams;
+use crate::presentation::middleware::validate::validate_uuid;
 use crate::presentation::middleware::{ValidatedJson, ValidatedPath};
 
 #[derive(Debug, Deserialize, Validate)]
@@ -16,6 +17,18 @@ pub struct UpdateTodoPayload {
     #[validate(length(min = 1))]
     pub title: String,
     pub description: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Validate)]
+pub(crate) struct TodoPathParams {
+    #[validate(custom = "validate_uuid")]
+    id: String,
+}
+
+impl TodoPathParams {
+    fn into_uuid(self) -> Uuid {
+        Uuid::parse_str(&self.id).expect("uuid validated")
+    }
 }
 
 pub struct UpdateTodoHandler<TS>
