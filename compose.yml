@@ -1,4 +1,18 @@
 services:
+  rust:
+    build:
+      context: ./backend_rust
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3004:3000"
+    volumes:
+      - ./backend_rust:/app
+    environment:
+      - DATABASE_URL=mysql://user:password@db:3306/todo_api
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
   java:
     build:
       context: ./backend_java
