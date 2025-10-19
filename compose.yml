@@ -1,4 +1,22 @@
 services:
+  bun:
+    build:
+      context: ./backend_bun
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3005:3000"
+    volumes:
+      - ./backend_bun:/app
+    environment:
+      - DB_HOST=db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=todo_api
+      - DB_PORT=3306
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
   rust:
     build:
       context: ./backend_rust

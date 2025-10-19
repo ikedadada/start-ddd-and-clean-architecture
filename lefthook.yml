@@ -32,3 +32,11 @@ pre-commit:
         cargo fmt
         cargo clippy -- -D warnings
         cargo test
+    bun:
+      glob: "frontend_bun/**/*.{ts,tsx,js,jsx}"
+      stage_fixed: true
+      run: |
+        cd frontend_bun
+        biome format --write src
+        biome check src
+        bun test src
